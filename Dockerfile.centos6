@@ -37,6 +37,7 @@ RUN yum --assumeyes clean all \
     gcc \
     gdb \
     git \
+    glibc-static \
     make \
     ncurses-devel \
     vim \
@@ -48,7 +49,8 @@ RUN git clone https://git.busybox.net/busybox.git
 WORKDIR /soshell/busybox
 RUN git checkout 1_15_3
 RUN make defconfig
-RUN make -j$(nproc)
+RUN sed -i 's/.*CONFIG_STATIC[^_].*$/CONFIG_STATIC=y/' .config
+RUN make -j$(nproc) busybox
 
-WORKDIR /soshell
-COPY . .
+#WORKDIR /soshell
+#COPY . .
