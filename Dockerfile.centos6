@@ -1,0 +1,54 @@
+# Copyright 2024 dah4k
+# SPDX-License-Identifier: MIT-0
+
+FROM centos:6
+
+RUN rm -f /etc/yum.repos.d/*.repo \
+ && printf "\
+[base]\n\
+name=CentOS-6.10 - Base\n\
+baseurl=http://vault.centos.org/6.10/os/\$basearch/\n\
+gpgcheck=1\n\
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6\n\
+enabled=1\n\
+metadata_expire=never\n\
+\n\
+[updates]\n\
+name=CentOS-6.10 - Updates\n\
+baseurl=http://vault.centos.org/6.10/updates/\$basearch/\n\
+gpgcheck=1\n\
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6\n\
+enabled=1\n\
+metadata_expire=never\n\
+\n\
+[extras]\n\
+name=CentOS-6.10 - Extras\n\
+baseurl=http://vault.centos.org/6.10/extras/\$basearch/\n\
+gpgcheck=1\n\
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6\n\
+enabled=1\n\
+metadata_expire=never\n\
+" > /etc/yum.repos.d/CentOS-Vault.repo
+
+RUN yum --assumeyes clean all \
+ && yum --assumeyes update \
+ && yum --assumeyes install \
+    binutils \
+    gcc \
+    gdb \
+    git \
+    make \
+    ncurses-devel \
+    vim \
+ && yum clean all
+
+WORKDIR /soshell
+RUN git clone https://git.busybox.net/busybox.git
+
+WORKDIR /soshell/busybox
+RUN git checkout 1_15_3
+RUN make defconfig
+RUN make -j$(nproc)
+
+WORKDIR /soshell
+COPY . .
