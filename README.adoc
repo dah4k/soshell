@@ -9,12 +9,15 @@ A **S**hared **O**bject **Shell** for experimentation.
 == Roadmap
 
 * [x] System execute `/bin/sh`
-* [ ] Busybox
+* [x] Compile static BusyBox
+* [ ] BusyBox as shared object
 
 
 == Resources
 
 * https://busybox.net/
 * https://stackoverflow.com/questions/3535825/is-busybox-available-in-shared-library-form/
+* https://stackoverflow.com/questions/915128/merge-multiple-so-shared-libraries/
+* https://unix.stackexchange.com/questions/125205/usr-bin-ld-cannot-find-lcrypt-rhel-6
 * https://vault.centos.org/
 
