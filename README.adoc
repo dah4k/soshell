@@ -15,5 +15,6 @@ A **S**hared **O**bject **Shell** for experimentation.
 == Resources
 
 * https://busybox.net/
-* https://stackoverflow.com/questions/3535825/is-busybox-available-in-shared-library-form
+* https://stackoverflow.com/questions/3535825/is-busybox-available-in-shared-library-form/
+* https://vault.centos.org/
 

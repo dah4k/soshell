@@ -1,0 +1,31 @@
+# Copyright 2024 dah4k
+# SPDX-License-Identifier: MIT-0
+
+FROM photon:5.0
+
+RUN tdnf --assumeyes update \
+ && tdnf --assumeyes install \
+    binutils \
+    bzip2 \
+    gcc \
+    gdb \
+    git \
+    glibc-devel \
+    linux-api-headers \
+    diffutils \
+    make \
+    ncurses-devel \
+    vim \
+    vim-extra \
+ && tdnf clean all
+
+WORKDIR /soshell
+RUN git clone https://git.busybox.net/busybox.git
+
+WORKDIR /soshell/busybox
+RUN git checkout 1_36_1
+RUN make defconfig
+RUN make -j$(nproc)
+
+WORKDIR /soshell
+COPY . .
