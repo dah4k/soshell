@@ -1,0 +1,19 @@
+// Copyright 2024 dah4k
+// SPDX-License-Identifier: MIT-0
+
+= SOShell
+
+A **S**hared **O**bject **Shell** for experimentation.
+
+
+== Roadmap
+
+* [x] System execute `/bin/sh`
+* [ ] Busybox
+
+
+== Resources
+
+* https://busybox.net/
+* https://stackoverflow.com/questions/3535825/is-busybox-available-in-shared-library-form
+
