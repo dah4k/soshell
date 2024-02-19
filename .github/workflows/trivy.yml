@@ -34,30 +34,25 @@ jobs:
           docker build --file Dockerfile.centos6 --tag docker.io/dah4k/soshell-centos6:${{ github.sha }} .
           docker build --file Dockerfile.photon5 --tag docker.io/dah4k/soshell-photon5:${{ github.sha }} .
 
-      - name: Run Trivy vulnerability scanner (CentOS 6)
+      - name: Run Trivy vulnerability scanner on CentOS 6 image
         uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
         with:
           image-ref: 'docker.io/dah4k/soshell-centos6:${{ github.sha }}'
           format: 'template'
           template: '@/contrib/sarif.tpl'
-          output: 'centos6-trivy-results.sarif'
+          output: './results/centos6-trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
 
-      - name: Upload Trivy scan results to GitHub Security tab (CentOS 6)
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: 'centos6-trivy-results.sarif'
-
-      - name: Run Trivy vulnerability scanner (Photon 5)
+      - name: Run Trivy vulnerability scanner on Photon 5 image
         uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
         with:
           image-ref: 'docker.io/dah4k/soshell-photon5:${{ github.sha }}'
           format: 'template'
           template: '@/contrib/sarif.tpl'
-          output: 'photon5-trivy-results.sarif'
+          output: './results/photon5-trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
 
-      - name: Upload Trivy scan results to GitHub Security tab (Photon 5)
+      - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: 'photon5-trivy-results.sarif'
+          sarif_file: './results'
