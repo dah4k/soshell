@@ -1,7 +1,7 @@
 # Copyright 2024 dah4k
 # SPDX-License-Identifier: MIT-0
 
-FROM centos:6
+FROM centos:6 AS Builder
 
 RUN rm -f /etc/yum.repos.d/*.repo \
  && printf "\
@@ -52,5 +52,22 @@ RUN make defconfig
 RUN sed -i 's/.*CONFIG_STATIC[^_].*$/CONFIG_STATIC=y/' .config
 RUN make -j$(nproc) busybox
 
-#WORKDIR /soshell
-#COPY . .
+WORKDIR /soshell
+COPY . .
+RUN make
+#ENTRYPOINT ["ldd", "hello_world"]
+
+FROM scratch
+# XXX: Docker COPY does not preserve symlink (https://github.com/moby/moby/issues/40449)
+WORKDIR /lib64
+COPY --from=Builder /lib64/libc-2.12.so .
+COPY --from=Builder /lib64/libc.so.6 .
+COPY --from=Builder /lib64/ld-2.12.so .
+COPY --from=Builder /lib64/ld-linux-x86-64.so.2 .
+COPY --from=Builder /soshell/libsoshell.so .
+
+WORKDIR /bin
+COPY --from=Builder /soshell/busybox/busybox busybox-static
+COPY --from=Builder /soshell/hello_world .
+
+ENTRYPOINT ["/bin/hello_world"]

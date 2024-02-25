@@ -1,7 +1,7 @@
 # Copyright 2024 dah4k
 # SPDX-License-Identifier: MIT-0
 
-FROM photon:5.0
+FROM photon:5.0 AS Builder
 
 RUN tdnf --assumeyes update \
  && tdnf --assumeyes install \
@@ -28,5 +28,31 @@ RUN make defconfig
 RUN sed -i 's/.*CONFIG_STATIC[^_].*$/CONFIG_STATIC=y/' .config
 RUN make -j$(nproc) busybox
 
-#WORKDIR /soshell
-#COPY . .
+WORKDIR /soshell
+COPY . .
+RUN make
+#ENTRYPOINT ["ldd", "hello_world"]
+
+FROM scratch
+# XXX: Docker COPY does not preserve symlink (https://github.com/moby/moby/issues/40449)
+WORKDIR /usr/lib64
+COPY --from=Builder /usr/lib64/libc.so.6 .
+COPY --from=Builder /usr/lib64/libc.so .
+COPY --from=Builder /usr/lib64/ld-linux-x86-64.so.2 .
+COPY --from=Builder /soshell/libsoshell.so .
+
+WORKDIR /usr/bin
+COPY --from=Builder /soshell/busybox/busybox busybox-static
+COPY --from=Builder /soshell/hello_world .
+
+# FIXME: Hello World not working. Likely must recreate symlinks
+# See Also https://github.com/moby/moby/issues/7281#issuecomment-389440503
+#SHELL ["/usr/bin/busybox-static"]
+#WORKDIR /usr
+#RUN ln -s lib64 lib
+#WORKDIR /
+#RUN ln -s usr/bin bin
+#RUN ln -s usr/lib lib
+#RUN ln -s usr/lib64 lib64
+
+ENTRYPOINT ["/usr/bin/hello_world"]
