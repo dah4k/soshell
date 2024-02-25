@@ -18,6 +18,12 @@ images: $(IMAGES)
 $(IMAGES):
 	docker build --file Dockerfile.$@ --tag soshell-$@ .
 
+test-%: %
+	docker run --interactive --tty --rm soshell-$<
+
+testsh-%: %
+	docker run --interactive --tty --rm --env LD_PRELOAD=/lib64/libsoshell.so soshell-$<
+
 %: %.c
 	$(CC) -o $@ $< -Wall -W -pedantic -O2 -std=c99
 

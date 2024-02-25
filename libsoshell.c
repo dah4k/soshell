@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 
 #include <stdlib.h>
+#include <unistd.h>
 
 #ifndef unsetenv
 extern int unsetenv(const char *);
@@ -9,5 +10,5 @@ extern int unsetenv(const char *);
 
 void __attribute__((constructor)) my_ctor(void) {
     unsetenv("LD_PRELOAD");         // Critical to avoid small Fork Bomb
-    system("/bin/sh");
+    execl("/bin/busybox-static", "sh", NULL);
 }
